@@ -1,6 +1,5 @@
 from django.db import models
 from titles.models import Title
-from rest_framework import serializers
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -16,7 +15,8 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    review_id = models.SlugField()
-    text = serializers.CharField(max_length=255)
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField()
     author = models.IntegerField()
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)

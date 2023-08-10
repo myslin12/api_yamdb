@@ -1,5 +1,5 @@
-from reviews.models import Review
-from .serializers import ReviewCreateSerializer
+from reviews.models import Comment, Review
+from .serializers import CommentCreateSerializer, ReviewCreateSerializer
 from rest_framework import mixins, viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets
@@ -20,3 +20,17 @@ class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
         title_id = self.kwargs['title_id']
         title = get_object_or_404(Title, pk=title_id)
         serializer.save(title=title)
+
+
+class CommentViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
+    serializer_class = CommentCreateSerializer
+    queryset = Comment.objects.all()
+
+    def get_queryset(self):
+        review_id = self.kwargs['review_id']
+        return Comment.objects.filter(review_id=review_id)
+
+    def perform_create(self, serializer):
+        review_id = self.kwargs['review_id']
+        review = get_object_or_404(Review, pk=review_id)
+        serializer.save(review=review)
