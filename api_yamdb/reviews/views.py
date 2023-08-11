@@ -6,11 +6,13 @@ from rest_framework import mixins, viewsets
 
 from titles.models import Title
 from reviews.models import Review
+from api.pagination import ApiPagination
 
 
 class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
     serializer_class = ReviewCreateSerializer
     queryset = Review.objects.all()
+    pagination_class = ApiPagination
 
     def get_queryset(self):
         title_id = self.kwargs['title_id']
