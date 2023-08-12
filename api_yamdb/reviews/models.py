@@ -20,3 +20,12 @@ class Comment(models.Model):
     text = models.TextField()
     author = models.IntegerField()
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+
+class Rating(models.Model):
+    title = models.ForeignKey(
+        Title, on_delete=models.CASCADE, related_name='ratings'
+    )
+    average_rating = models.DecimalField(
+        max_digits=3, decimal_places=2, default=0
+    )

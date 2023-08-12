@@ -5,8 +5,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets
 
 from titles.models import Title
-from reviews.models import Review
+from reviews.models import Rating, Review
 from api.pagination import ApiPagination
+from django.db.models import Avg
 
 
 class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
@@ -22,6 +23,19 @@ class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
         title_id = self.kwargs['title_id']
         title = get_object_or_404(Title, pk=title_id)
         serializer.save(title=title)
+        self.update_average_rating(title)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        self.update_average_rating(instance.title)
+
+    def update_average_rating(self, title):
+        average_rating = Review.objects.filter(
+            title=title
+        ).aggregate(Avg('score'))['score__avg']
+        rating, _ = Rating.objects.get_or_create(title=title)
+        rating.average_rating = average_rating or 0
+        rating.save()
 
 
 class CommentViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
