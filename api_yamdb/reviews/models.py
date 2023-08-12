@@ -1,5 +1,4 @@
 from django.db import models
-from titles.models import Title
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 
@@ -51,7 +50,7 @@ class User(AbstractUser):
 
 class Review(models.Model):
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='reviews')
+        'titles.Title', on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     author = models.IntegerField()
     score = models.IntegerField(
