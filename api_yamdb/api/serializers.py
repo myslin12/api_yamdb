@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from titles.models import Title, Genre, Category, User
+from reviews.models import Rating
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -104,8 +105,17 @@ class TitleSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(),
         slug_field='slug'
     )
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
-        # Не забыть добавить поле рейтинга
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category',)
+        fields = (
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category',
+        )
+
+    def get_rating(self, title):
+        try:
+            rating = Rating.objects.get(title=title)
+            return rating.average_rating
+        except Rating.DoesNotExist:
+            return 0

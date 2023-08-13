@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 
+
 USER_ROLE_CHOICES = [
     ('user', 'user'),
     ('moderator', 'moderator'),
@@ -52,7 +53,8 @@ class Review(models.Model):
     title = models.ForeignKey(
         'titles.Title', on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
-    author = models.IntegerField()
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='reviews')
     score = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
@@ -63,5 +65,15 @@ class Comment(models.Model):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
-    author = models.IntegerField()
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='comments')
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+
+class Rating(models.Model):
+    title = models.ForeignKey(
+        'titles.Title', on_delete=models.CASCADE, related_name='ratings'
+    )
+    average_rating = models.DecimalField(
+        max_digits=3, decimal_places=2, default=0
+    )
