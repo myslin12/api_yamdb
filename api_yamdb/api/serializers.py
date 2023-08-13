@@ -29,9 +29,17 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
 
-class SignupSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
-    username = serializers.CharField(required=True)
+class UserEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ("username", "email", "first_name",
+                  "last_name", "bio", "role")
+        model = User
+        read_only_fields = ('role',)
+
+
+class SignupSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True, max_length=254)
+    username = serializers.CharField(required=True, max_length=150)
 
     class Meta:
         model = User
