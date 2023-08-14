@@ -7,12 +7,14 @@ from rest_framework import mixins, viewsets
 from reviews.models import Rating, Review, Title
 from api.pagination import ApiPagination
 from django.db.models import Avg
+from api.permissions import CommentRewiewPermission
 
 
 class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
     serializer_class = ReviewCreateSerializer
     queryset = Review.objects.all()
     pagination_class = ApiPagination
+    permission_classes = [CommentRewiewPermission]
 
     def get_queryset(self):
         title_id = self.kwargs['title_id']
@@ -41,6 +43,7 @@ class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
 class CommentViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
     serializer_class = CommentCreateSerializer
     queryset = Comment.objects.all()
+    permission_classes = [CommentRewiewPermission]
 
     def get_queryset(self):
         review_id = self.kwargs['review_id']
