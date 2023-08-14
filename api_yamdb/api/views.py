@@ -12,6 +12,19 @@ from rest_framework.decorators import action, api_view, permission_classes
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import CharFilter, FilterSet, NumberFilter
+
+
+class TitleFilter(FilterSet):
+    genre = CharFilter(field_name='genre__slug', lookup_expr='contains')
+    category = CharFilter(field_name='category__slug', lookup_expr='contains')
+    year = NumberFilter(field_name='year', lookup_expr='exact')
+    name = CharFilter(field_name='name', lookup_expr='icontains')
+
+    class Meta:
+        model = Title
+        fields = ['genre', 'category', 'year', 'name']
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -141,8 +154,10 @@ class CategoryViewSet(
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     permission_classes = (GenresTitlesPermission,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action in ['create', 'update', 'partial_update']:
             return TitleCreateSerializer
         return TitleSerializer

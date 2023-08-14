@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
@@ -73,7 +74,14 @@ class Category(models.Model):
 class Title(models.Model):
     '''Модель произведений.'''
     name = models.CharField(max_length=256)
-    year = models.IntegerField()
+    year = models.PositiveIntegerField(
+        validators=[
+            MaxValueValidator(
+                datetime.datetime.now().year,
+                message="Год не должен быть больше текущего."
+            )
+        ]
+    )
     description = models.TextField(blank=True, null=True)
     genre = models.ManyToManyField(
         'Genre',
@@ -84,6 +92,14 @@ class Title(models.Model):
         on_delete=models.CASCADE,
         related_name='titles'
     )
+
+    @property
+    def rating(self):
+        reviews = self.reviews.all()
+        if reviews.exists():
+            average_score = reviews.aggregate(models.Avg('score'))['score__avg']
+            return round(average_score, 1)
+        return None
 
     def __str__(self):
         return self.name

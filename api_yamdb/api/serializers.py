@@ -98,7 +98,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
-    rating = serializers.SerializerMethodField()
+    # rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
@@ -106,12 +106,12 @@ class TitleSerializer(serializers.ModelSerializer):
             'id', 'name', 'year', 'rating', 'description', 'genre', 'category',
         )
 
-    def get_rating(self, title):
-        try:
-            rating = Rating.objects.get(title=title)
-            return rating.average_rating
-        except Rating.DoesNotExist:
-            return 0
+    # def get_rating(self, title):
+    #     try:
+    #         rating = Rating.objects.get(title=title)
+    #         return rating.average_rating
+    #     except Rating.DoesNotExist:
+    #         return 0
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
