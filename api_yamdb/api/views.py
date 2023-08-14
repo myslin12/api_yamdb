@@ -1,6 +1,5 @@
 from rest_framework.decorators import action
-from titles.models import Title, Genre, Category
-from reviews.models import User
+from reviews.models import User, Title, Genre, Category
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (TitleSerializer, GenreSerializer, CategorySerializer,
@@ -49,6 +48,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
     def get_queryset(self):
         queryset = super().get_queryset()
         search_username = self.request.query_params.get("search", None)

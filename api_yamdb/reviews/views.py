@@ -4,8 +4,7 @@ from rest_framework import mixins, viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets
 
-from titles.models import Title
-from reviews.models import Rating, Review
+from reviews.models import Rating, Review, Title
 from api.pagination import ApiPagination
 from django.db.models import Avg
 
