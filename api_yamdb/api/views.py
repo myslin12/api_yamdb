@@ -7,7 +7,7 @@ from .serializers import (TitleSerializer, GenreSerializer, CategorySerializer,
                           UserSerializer, SignupSerializer, TokenSerializer,
                           UserEditSerializer)
 from .permissions import IsAdmin
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, status, viewsets, filters
 from rest_framework.views import APIView
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
@@ -116,11 +116,16 @@ def get_jwt_token(request):
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (IsAdmin,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class TitleViewSet(viewsets.ModelViewSet):

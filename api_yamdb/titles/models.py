@@ -1,15 +1,11 @@
-from django.contrib.auth import get_user_model
 from django.db import models
-
-# Временно дам ссылку на стандартную User-модель
-User = get_user_model()
 
 
 class Title(models.Model):
     '''Модель произведений.'''
     name = models.CharField(max_length=256)
     year = models.IntegerField()
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     genre = models.ManyToManyField(
         'Genre',
         related_name='titles',
