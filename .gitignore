@@ -151,3 +151,6 @@ media/
 # убираем миграции
 **/migrations/
 
+# игнорируем email
+email/
+

@@ -1,13 +1,11 @@
 from rest_framework.decorators import action
 from reviews.models import User, Title, Genre, Category
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from .serializers import (TitleSerializer, GenreSerializer, CategorySerializer,
                           UserSerializer, SignupSerializer, TokenSerializer,
-                          UserEditSerializer)
-from .permissions import IsAdmin
-from rest_framework import permissions, status, viewsets, filters
-from rest_framework.views import APIView
+                          UserEditSerializer, TitleCreateSerializer)
+from .permissions import IsAdmin, GenresTitlesPermission
+from rest_framework import permissions, status, viewsets, filters, mixins
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action, api_view, permission_classes
@@ -112,21 +110,39 @@ def get_jwt_token(request):
     )
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = 'slug'
+    permission_classes = (GenresTitlesPermission,)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = 'slug'
+    permission_classes = (GenresTitlesPermission,)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
+    permission_classes = (GenresTitlesPermission,)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return TitleCreateSerializer
+        return TitleSerializer

@@ -48,6 +48,9 @@ class User(AbstractUser):
             or self.is_staff
         )
 
+    def __str__(self):
+        return self.username
+
 
 class Genre(models.Model):
     '''Модель жанров.'''

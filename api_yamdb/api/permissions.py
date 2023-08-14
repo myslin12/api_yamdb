@@ -25,6 +25,7 @@ class CommentRewiewPermission(permissions.BasePermission):
 
 class GenresTitlesPermission(permissions.BasePermission):
     def has_permission(self, request, view):
+
         return (
             request.method in permissions.SAFE_METHODS
             or request.user.is_authenticated
