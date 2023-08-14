@@ -112,13 +112,16 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 # переопределяем пользовательскую модель
 AUTH_USER_MODEL = 'reviews.User'
 
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+'''EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_HOST_USER = 'email@email.com'
 EMAIL_HOST_PASSWORD = 'xxxxxxxxx'
-EMAIL_PORT = 465
+EMAIL_PORT = 465'''
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = (BASE_DIR / 'email/')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

@@ -49,6 +49,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
     def get_queryset(self):
         queryset = super().get_queryset()
         search_username = self.request.query_params.get("search", None)
@@ -62,16 +63,21 @@ class UserViewSet(viewsets.ModelViewSet):
 def register(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    serializer.save()
+    '''serializer.save()
     user = get_object_or_404(
         User,
         username=serializer.validated_data["username"]
-    )
+    )'''
+    user = serializer.save()
+
     confirmation_code = default_token_generator.make_token(user)
+    user.code = confirmation_code
+    user.save()
+
     send_mail(
         subject="YaMDb registration",
         message=f"Your confirmation code: {confirmation_code}",
-        from_email=None,
+        from_email='dimam2311@gmai.com',
         recipient_list=[user.email],
     )
 
@@ -88,13 +94,23 @@ def get_jwt_token(request):
         username=serializer.validated_data["username"]
     )
 
-    if default_token_generator.check_token(
+    '''if default_token_generator.check_token(
         user, serializer.validated_data["confirmation_code"]
     ):
         token = AccessToken.for_user(user)
         return Response({"token": str(token)}, status=status.HTTP_200_OK)
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)'''
+
+    confirmation_code = serializer.validated_data.get("confirmation_code")
+    if user.code == confirmation_code:
+        token = AccessToken.for_user(user)
+        return Response({"token": str(token)}, status=status.HTTP_200_OK)
+
+    return Response(
+        {"detail": "Invalid confirmation code."},
+        status=status.HTTP_400_BAD_REQUEST
+    )
 
 
 class GenreViewSet(viewsets.ModelViewSet):
