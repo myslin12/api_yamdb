@@ -49,9 +49,46 @@ class User(AbstractUser):
         )
 
 
+class Genre(models.Model):
+    '''Модель жанров.'''
+    slug = models.SlugField(unique=True, max_length=50)
+    name = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.name
+
+
+class Category(models.Model):
+    '''Модель категории.'''
+    slug = models.SlugField(unique=True, max_length=50)
+    name = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.name
+
+
+class Title(models.Model):
+    '''Модель произведений.'''
+    name = models.CharField(max_length=256)
+    year = models.IntegerField()
+    description = models.TextField(blank=True, null=True)
+    genre = models.ManyToManyField(
+        'Genre',
+        related_name='titles',
+    )
+    category = models.ForeignKey(
+        'Category',
+        on_delete=models.CASCADE,
+        related_name='titles'
+    )
+
+    def __str__(self):
+        return self.name
+
+
 class Review(models.Model):
     title = models.ForeignKey(
-        'titles.Title', on_delete=models.CASCADE, related_name='reviews')
+        Title, on_delete=models.CASCADE, related_name='reviews')
     text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
@@ -72,7 +109,7 @@ class Comment(models.Model):
 
 class Rating(models.Model):
     title = models.ForeignKey(
-        'titles.Title', on_delete=models.CASCADE, related_name='ratings'
+        Title, on_delete=models.CASCADE, related_name='ratings'
     )
     average_rating = models.DecimalField(
         max_digits=3, decimal_places=2, default=0

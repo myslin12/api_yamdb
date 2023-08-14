@@ -1,6 +1,5 @@
 from rest_framework.decorators import action
-from titles.models import Title, Genre, Category
-from reviews.models import User
+from reviews.models import User, Title, Genre, Category
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (TitleSerializer, GenreSerializer, CategorySerializer,

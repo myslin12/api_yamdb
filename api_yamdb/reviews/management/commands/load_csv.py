@@ -13,12 +13,12 @@ class Command(BaseCommand):
         base_path = Path(__file__).resolve().parent.parent.parent.parent / 'static' / 'data'
 
         filename_to_table = {
-            'category.csv': 'titles_category',
+            'category.csv': 'reviews_category',
             'comments.csv': 'reviews_comment',
-            'genre_title.csv': 'titles_title_genre',
-            'genre.csv': 'titles_genre',
+            'genre_title.csv': 'reviews_title_genre',
+            'genre.csv': 'reviews_genre',
             'review.csv': 'reviews_review',
-            'titles.csv': 'titles_title',
+            'titles.csv': 'reviews_title',
             'users.csv': 'reviews_user',
         }
 
