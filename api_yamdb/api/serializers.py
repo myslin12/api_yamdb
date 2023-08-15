@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             'role'
         )
         lookup_field = 'username'
+
     def validate_username(self, value):
         if value == 'me':
             raise serializers.ValidationError(
@@ -121,8 +122,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
-    category = CategorySerializer()
-    # rating = serializers.SerializerMethodField()
+    category = CategorySerializer()    
 
     class Meta:
         model = Title
@@ -140,7 +140,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
         slug_field='slug'
-    )
+    )    
 
     class Meta:
         model = Title
