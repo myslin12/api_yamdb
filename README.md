@@ -72,7 +72,7 @@
 2. Создать и активировать виртуальное окружение:
 
     ```shell
-    python -m venv env
+    python -m venv venv
     source venv/Scripts/activate
     ```
 
