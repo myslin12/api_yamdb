@@ -18,9 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
             'role'
         )
         lookup_field = 'username'
-
-# оставил валидацию, чтобы admin не создал пользователя с именем me
-# или пользователь не поменял свой username на me
     def validate_username(self, value):
         if value == 'me':
             raise serializers.ValidationError(
@@ -102,7 +99,6 @@ class SignupSerializer(serializers.ModelSerializer):
 
 
 class TokenSerializer(serializers.Serializer):
-    # confirmation_code = serializers.CharField(source='code')
     confirmation_code = serializers.CharField(required=True)
     username = serializers.CharField()
 
@@ -133,13 +129,6 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'year', 'rating', 'description', 'genre', 'category',
         )
-
-    # def get_rating(self, title):
-    #     try:
-    #         rating = Rating.objects.get(title=title)
-    #         return rating.average_rating
-    #     except Rating.DoesNotExist:
-    #         return 0
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
