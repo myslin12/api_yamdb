@@ -122,7 +122,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
-    category = CategorySerializer()    
+    category = CategorySerializer()
 
     class Meta:
         model = Title
@@ -140,7 +140,7 @@ class TitleCreateSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(),
         slug_field='slug'
-    )    
+    )
 
     class Meta:
         model = Title
