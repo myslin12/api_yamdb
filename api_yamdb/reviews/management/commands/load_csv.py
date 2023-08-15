@@ -12,7 +12,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         engine = create_engine('sqlite:///db.sqlite3')
 
-        base_path = Path(__file__).resolve().parent.parent.parent.parent / 'static' / 'data'
+        base_path = (
+            Path(__file__)
+            .resolve()
+            .parent
+            .parent
+            .parent
+            .parent / 'static' / 'data'
+        )
 
         filename_to_table = {
             'category.csv': 'reviews_category',
@@ -34,6 +41,8 @@ class Command(BaseCommand):
 
             df.to_sql(value, if_exists='append', con=engine, index=False)
 
-            self.stdout.write(self.style.SUCCESS(f"Добавлено {len(df)} строк в таблицу '{value}'"))
+            self.stdout.write(self.style.SUCCESS(
+                f"Добавлено {len(df)} строк в таблицу '{value}'"
+            ))
 
         self.stdout.write(self.style.SUCCESS("Загрузка окончена"))
