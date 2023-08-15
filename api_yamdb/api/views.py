@@ -82,11 +82,6 @@ class UserViewSet(viewsets.ModelViewSet):
 def register(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    '''serializer.save()
-    user = get_object_or_404(
-        User,
-        username=serializer.validated_data["username"]
-    )'''
     user = serializer.save()
 
     confirmation_code = default_token_generator.make_token(user)
@@ -112,14 +107,6 @@ def get_jwt_token(request):
         User,
         username=serializer.validated_data["username"]
     )
-
-    '''if default_token_generator.check_token(
-        user, serializer.validated_data["confirmation_code"]
-    ):
-        token = AccessToken.for_user(user)
-        return Response({"token": str(token)}, status=status.HTTP_200_OK)
-
-    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)'''
 
     confirmation_code = serializer.validated_data.get("confirmation_code")
     if user.code == confirmation_code:
