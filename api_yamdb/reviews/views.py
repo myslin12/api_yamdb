@@ -1,19 +1,19 @@
-from reviews.models import Comment, Review
-from .serializers import CommentCreateSerializer, ReviewCreateSerializer
-from rest_framework import mixins, viewsets
-from django.shortcuts import get_object_or_404
-from rest_framework import mixins, viewsets
-
-from titles.models import Title
-from reviews.models import Rating, Review
-from api.pagination import ApiPagination
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
+
+from api.pagination import ApiPagination
+from api.permissions import CommentRewiewPermission
+from rest_framework import mixins, viewsets
+from reviews.models import Comment, Rating, Review, Title
+
+from .serializers import CommentCreateSerializer, ReviewCreateSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
     serializer_class = ReviewCreateSerializer
     queryset = Review.objects.all()
     pagination_class = ApiPagination
+    permission_classes = [CommentRewiewPermission]
 
     def get_queryset(self):
         title_id = self.kwargs['title_id']
@@ -22,7 +22,8 @@ class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
     def perform_create(self, serializer):
         title_id = self.kwargs['title_id']
         title = get_object_or_404(Title, pk=title_id)
-        serializer.save(title=title)
+        author = self.request.user
+        serializer.save(title=title, author=author)
         self.update_average_rating(title)
 
     def perform_update(self, serializer):
@@ -41,6 +42,7 @@ class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
 class CommentViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
     serializer_class = CommentCreateSerializer
     queryset = Comment.objects.all()
+    permission_classes = [CommentRewiewPermission]
 
     def get_queryset(self):
         review_id = self.kwargs['review_id']
@@ -49,4 +51,5 @@ class CommentViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):
     def perform_create(self, serializer):
         review_id = self.kwargs['review_id']
         review = get_object_or_404(Review, pk=review_id)
-        serializer.save(review=review)
+        author = self.request.user
+        serializer.save(review=review, author=author)
