@@ -1,13 +1,12 @@
-from reviews.models import Comment, Review
-from .serializers import CommentCreateSerializer, ReviewCreateSerializer
-from rest_framework import mixins, viewsets
-from django.shortcuts import get_object_or_404
-from rest_framework import mixins, viewsets
-
-from reviews.models import Rating, Review, Title
-from api.pagination import ApiPagination
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
+
+from api.pagination import ApiPagination
 from api.permissions import CommentRewiewPermission
+from rest_framework import mixins, viewsets
+from reviews.models import Comment, Rating, Review, Title
+
+from .serializers import CommentCreateSerializer, ReviewCreateSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet, mixins.CreateModelMixin):

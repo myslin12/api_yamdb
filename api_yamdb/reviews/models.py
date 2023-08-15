@@ -1,8 +1,8 @@
 import datetime
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.auth.models import AbstractUser
 
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 USER_ROLE_CHOICES = [
     ('user', 'user'),
@@ -97,7 +97,9 @@ class Title(models.Model):
     def rating(self):
         reviews = self.reviews.all()
         if reviews.exists():
-            average_score = reviews.aggregate(models.Avg('score'))['score__avg']
+            average_score = reviews.aggregate(
+                models.Avg('score')
+            )['score__avg']
             return round(average_score, 1)
         return None
 

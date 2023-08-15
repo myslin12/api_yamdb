@@ -1,19 +1,27 @@
-from rest_framework.decorators import action
-from reviews.models import User, Title, Genre, Category
-from rest_framework.response import Response
-from .serializers import (TitleSerializer, GenreSerializer, CategorySerializer,
-                          UserSerializer, SignupSerializer, TokenSerializer,
-                          UserEditSerializer, TitleCreateSerializer)
-from .permissions import IsAdmin, GenresTitlesPermission
-from rest_framework import permissions, status, viewsets, filters, mixins
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action, api_view, permission_classes
 from django.core.mail import send_mail
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.pagination import PageNumberPagination
-from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
+
 from django_filters import CharFilter, FilterSet, NumberFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, permissions, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
+from reviews.models import Category, Genre, Title, User
+
+from .permissions import GenresTitlesPermission, IsAdmin
+from .serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    SignupSerializer,
+    TitleCreateSerializer,
+    TitleSerializer,
+    TokenSerializer,
+    UserEditSerializer,
+    UserSerializer
+)
 
 
 class TitleFilter(FilterSet):
@@ -33,6 +41,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
     permission_classes = (IsAdmin,)
+    http_method_names = ('get', 'post', 'patch', 'delete')
 
     @action(
         methods=[

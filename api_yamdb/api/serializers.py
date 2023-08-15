@@ -1,5 +1,8 @@
+from django.core.validators import RegexValidator
+from django.db.models import Q
+
 from rest_framework import serializers
-from reviews.models import Rating, User, Title, Genre, Category
+from reviews.models import Category, Genre, Title, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -45,32 +48,57 @@ class SignupSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'email')
 
-    def validate_username(self, value):
-        if value == 'me' or '':
+    username_validator = RegexValidator(
+        regex=r'^[\w.@+-]+$',
+        message='В username может состоять из букв, цифр и знаков: @ . + - _',
+        code='invalid_username'
+    )
+
+    def validate(self, data):
+        username = data.get('username')
+        email = data.get('email')
+
+        if username == 'me' or '':
             raise serializers.ValidationError(
                 {
                     'username':
                     'Нельзя использовать имя me в качестве имени пользователя.'
                 },
             )
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError(
-                {
-                    'username':
-                    'Пользователь с данным username уже зарегистрирован.'
-                },
-            )
-        return value
 
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
+        existing_user_with_username = (
+            User.objects.filter(username=username)
+            .exclude(email=email)
+            .first()
+        )
+        if existing_user_with_username:
             raise serializers.ValidationError(
-                {
-                    'email':
-                    'Пользователь с данным email уже зарегистрирован.'
-                },
+                {'username': 'Имя пользователя занято.'}
             )
-        return value
+
+        existing_user_with_email = (
+            User.objects.filter(email=email)
+            .exclude(username=username)
+            .first()
+        )
+        if existing_user_with_email:
+            raise serializers.ValidationError({'email': 'Почта уже занята.'})
+
+        self.username_validator(username)
+
+        return data
+
+    def create(self, validated_data):
+        existing_user = User.objects.filter(
+            Q(username=validated_data['username'])
+            | Q(email=validated_data['email'])
+        ).first()
+
+        if existing_user:
+            return existing_user
+
+        user = User.objects.create_user(**validated_data)
+        return user
 
 
 class TokenSerializer(serializers.Serializer):
