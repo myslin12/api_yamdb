@@ -1,5 +1,5 @@
 from django_filters import CharFilter, FilterSet, NumberFilter
-from reviews.models import Title
+from reviews.models import Title, User
 
 
 class TitleFilter(FilterSet):
@@ -11,3 +11,11 @@ class TitleFilter(FilterSet):
     class Meta:
         model = Title
         fields = ['genre', 'category', 'year', 'name']
+
+
+class UserFilter(FilterSet):
+    search = CharFilter(field_name='username', lookup_expr='icontains')
+
+    class Meta:
+        model = User
+        fields = ['search']

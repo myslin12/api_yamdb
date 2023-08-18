@@ -14,6 +14,7 @@ from reviews.models import Category, Genre, Title, User
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyMixin
 from .permissions import GenresTitlesPermission, IsAdmin
+from .filters import UserFilter
 from .serializers import (
     CategorySerializer,
     GenreSerializer,
@@ -33,6 +34,8 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     permission_classes = (IsAdmin,)
     http_method_names = ('get', 'post', 'patch', 'delete')
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = UserFilter
 
     @action(
         methods=[
@@ -62,9 +65,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search_username = self.request.query_params.get("search", None)
-        if search_username:
-            queryset = queryset.filter(username__icontains=search_username)
         return queryset
 
 
