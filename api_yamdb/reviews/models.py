@@ -4,11 +4,13 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-USER_ROLE_CHOICES = [
-    ('user', 'user'),
-    ('moderator', 'moderator'),
-    ('admin', 'admin'),
-]
+from enum import Enum
+
+
+class UserRoleEnum(Enum):
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
 
 
 class User(AbstractUser):
@@ -22,7 +24,7 @@ class User(AbstractUser):
     bio = models.TextField('bio', blank=True)
     role = models.CharField(
         max_length=16,
-        choices=USER_ROLE_CHOICES,
+        choices=[(role.value, role.name) for role in UserRoleEnum],
         default='user',
     )
     code = models.CharField(
