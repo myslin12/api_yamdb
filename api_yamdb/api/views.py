@@ -22,7 +22,6 @@ from .serializers import (
     TitleCreateSerializer,
     TitleSerializer,
     TokenSerializer,
-    UserEditSerializer,
     UserSerializer
 )
 
@@ -45,18 +44,19 @@ class UserViewSet(viewsets.ModelViewSet):
         detail=False,
         url_path="me",
         permission_classes=[permissions.IsAuthenticated],
-        serializer_class=UserEditSerializer,
+        serializer_class=UserSerializer,
     )
     def users_own_profile(self, request):
         user = request.user
         if request.method == "GET":
             serializer = self.get_serializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = self.get_serializer(
-            user,
-            data=request.data,
-            partial=True
-        )
+        elif request.method == "PATCH":
+            serializer = self.get_serializer(
+                user,
+                data=request.data,
+                partial=True
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
