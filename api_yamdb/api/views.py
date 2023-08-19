@@ -71,18 +71,22 @@ class UserViewSet(viewsets.ModelViewSet):
 def register(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = serializer.save()
 
-    confirmation_code = default_token_generator.make_token(user)
-    user.code = confirmation_code
-    user.save()
-
-    send_mail(
-        subject="YaMDb registration",
-        message=f"Your confirmation code: {confirmation_code}",
-        from_email='dimam2311@gmai.com',
-        recipient_list=[user.email],
+    user, created = User.objects.get_or_create(
+        username=request.data.get('username'),
+        email=request.data.get('email')
     )
+
+    if created:
+        confirmation_code = default_token_generator.make_token(user)
+        user.code = confirmation_code
+        user.save()
+        send_mail(
+            subject="YaMDb registration",
+            message=f"Your confirmation code: {confirmation_code}",
+            from_email='dimam2311@gmai.com',
+            recipient_list=[user.email],
+        )
 
     return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -16,10 +16,7 @@ class UserRoleEnum(Enum):
 class User(AbstractUser):
     """Класс для пользовательской модели."""
     email = models.EmailField(
-        'email address',
-        blank=False,
         unique=True,
-        max_length=254,
     )
     bio = models.TextField('bio', blank=True)
     role = models.CharField(
