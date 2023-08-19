@@ -23,7 +23,7 @@ class CommentRewiewPermission(permissions.BasePermission):
         )
 
 
-class GenresTitlesPermission(permissions.BasePermission):
+class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
 
         return (
