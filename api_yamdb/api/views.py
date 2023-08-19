@@ -13,7 +13,7 @@ from reviews.models import Category, Genre, Title, User
 
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyMixin
-from .permissions import GenresTitlesPermission, IsAdmin
+from .permissions import IsAdminOrReadOnly, IsAdmin
 from .filters import UserFilter
 from .serializers import (
     CategorySerializer,
@@ -122,7 +122,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('reviews__score')
     ).all()
-    permission_classes = (GenresTitlesPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
 

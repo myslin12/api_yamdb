@@ -5,7 +5,7 @@ from rest_framework.mixins import (
     ListModelMixin
 )
 
-from .permissions import GenresTitlesPermission
+from .permissions import IsAdminOrReadOnly
 
 
 class ListCreateDestroyMixin(
@@ -13,7 +13,7 @@ class ListCreateDestroyMixin(
     CreateModelMixin,
     DestroyModelMixin
 ):
-    permission_classes = (GenresTitlesPermission,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'

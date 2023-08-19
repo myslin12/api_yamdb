@@ -29,13 +29,9 @@ class UserSerializer(serializers.ModelSerializer):
             )
         return value
 
-
-class UserEditSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ("username", "email", "first_name",
-                  "last_name", "bio", "role")
-        model = User
-        read_only_fields = ('role',)
+    def update(self, instance, validated_data):
+        validated_data.pop('role', None)
+        return super().update(instance, validated_data)
 
 
 class SignupSerializer(serializers.ModelSerializer):
