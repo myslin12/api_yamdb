@@ -57,8 +57,11 @@ class SignupSerializer(serializers.Serializer):
                 },
             )
 
-        if User.objects.filter(Q(username=username) | Q(email=email)).exclude(username=username, email=email).exists():
-            raise serializers.ValidationError("Username или email уже существует.")
+        if User.objects.filter(Q(username=username) |
+            Q(email=email)).exclude(username=username, email=email).exists():
+            raise serializers.ValidationError(
+                "Username или email уже существует."
+            )
         return data
 
 
