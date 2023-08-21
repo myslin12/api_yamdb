@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from rest_framework import serializers
 from reviews.models import Category, Genre, Title, User
 
@@ -55,15 +57,8 @@ class SignupSerializer(serializers.Serializer):
                 },
             )
 
-        if not User.objects.filter(username=username, email=email):
-            if User.objects.filter(username=username):
-                raise serializers.ValidationError(
-                    {'username': 'Username уже занят'}
-                )
-            if User.objects.filter(email=email):
-                raise serializers.ValidationError(
-                    {'email': 'email уже занято'}
-                )
+        if User.objects.filter(Q(username=username) | Q(email=email)).exclude(username=username, email=email).exists():
+            raise serializers.ValidationError("Username или email уже существует.")
         return data
 
 

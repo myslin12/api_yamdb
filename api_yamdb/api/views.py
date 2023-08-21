@@ -11,10 +11,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Title, User
 
-from .filters import TitleFilter
+from .filters import TitleFilter, UserFilter
 from .mixins import ListCreateDestroyMixin
-from .permissions import IsAdminOrReadOnly, IsAdmin
-from .filters import UserFilter
+from .permissions import IsAdmin, IsAdminOrReadOnly
 from .serializers import (
     CategorySerializer,
     GenreSerializer,
@@ -102,7 +101,7 @@ def get_jwt_token(request):
     )
 
     confirmation_code = serializer.validated_data.get("confirmation_code")
-    if user.code == confirmation_code:
+    if default_token_generator.check_token(user, confirmation_code):
         token = AccessToken.for_user(user)
         return Response({"token": str(token)}, status=status.HTTP_200_OK)
 

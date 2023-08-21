@@ -1,10 +1,9 @@
 import datetime
+from enum import Enum
 
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
-from enum import Enum
 
 
 class UserRoleEnum(Enum):
