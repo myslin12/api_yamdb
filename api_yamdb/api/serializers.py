@@ -48,6 +48,7 @@ class SignupSerializer(serializers.Serializer):
     def validate(self, data):
         username = data.get('username')
         email = data.get('email')
+        query = Q(username=username) | Q(email=email)
 
         if username == 'me' or '':
             raise serializers.ValidationError(
@@ -57,8 +58,8 @@ class SignupSerializer(serializers.Serializer):
                 },
             )
 
-        if User.objects.filter(Q(username=username) |
-            Q(email=email)).exclude(username=username, email=email).exists():
+        if User.objects.filter(query).exclude(username=username,
+                                              email=email).exists():
             raise serializers.ValidationError(
                 "Username или email уже существует."
             )
